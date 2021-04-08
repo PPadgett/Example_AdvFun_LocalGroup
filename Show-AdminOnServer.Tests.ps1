@@ -7,7 +7,7 @@ Describe 'Show-AdminOnServer Valid Inputs' {
             $DNSCheck = ([System.Net.Dns]::GetHostByName(("$env:COMPUTERNAME")))         
             $Object = New-Object PSObject -Property ([ordered]@{ 
               
-                        "Server name"             = $env:COMPUTERNAME
+                        "Server name"             = ''#$env:COMPUTERNAME
                         "FQDN"                    = $DNSCheck.hostname
                         "IP Address"              = $DNSCheck.AddressList[0]
          
