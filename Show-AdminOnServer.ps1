@@ -26,9 +26,9 @@ Param(
     # Param1 help description
     [Parameter(ParameterSetName = 'Default',
         Position = 0,
-        Mandatory = $true)]
+        Mandatory = $false)]
     [Alias("CN")]
-    $ComputerName,
+    $ComputerName = "$env:COMPUTERNAME",
 
     # Param2 help description
     [Parameter(ParameterSetName = 'Default',             
@@ -54,7 +54,7 @@ function Show-AdminOnServer
             Position = 0,
             Mandatory = $false)]
         [Alias("CN")]
-        $ComputerName = "$env:COMPUTERNAME",
+        $ComputerName,
 
         # Param2 help description
         [Parameter(ParameterSetName = 'Default',             
@@ -86,7 +86,9 @@ function Show-AdminOnServer
         {
             if ($VerifiedComputerList) {
                 Write-Verbose "Retrieving Administrator ID from the Administrators Group"
-                New-CimSession -Credential $Credential | Get-CimInstance  -ClassName win32_group -Filter "name = 'administrators'" | Get-CimAssociatedInstance -Association win32_groupuser | Format-Table -Property "Domain","Name"
+                ForEach-Object -InputObject $VerifiedComputerList -Process  {
+                    New-CimSession -Credential $Credential | Get-CimInstance  -ClassName win32_group -Filter "name = 'administrators'" | Get-CimAssociatedInstance -Association win32_groupuser | Format-Table -Property "Domain","Name"
+                }
                 
             }
         }
@@ -100,4 +102,4 @@ function Show-AdminOnServer
     }
 }
 
-Show-AdminOnServer -ServerName $ServerName -Credential $Credential
+Show-AdminOnServer -ComputerName $ComputerName -Credential $Credential
